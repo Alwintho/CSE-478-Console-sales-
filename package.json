@@ -1,0 +1,8 @@
+{
+  "name": "console-sales-story",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A D3 scrollytelling project about tracked console sales and overlapping generations.",
+  "scripts": { "test": "node --test tests/*.test.js" }
+}

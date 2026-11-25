@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore how individual console sales, company portfolios, and overlapping generations shaped tracked worldwide hardware sales from 2006 to 2025.">
+    <title>Passing the Controller · Console Sales Story</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="vendor/d3.v7.min.js" defer></script>
+    <script type="module" src="main.js"></script>
+</head>
+<body>
+    <a class="skip-link" href="#story">Skip to the charts</a>
+    <header class="site-header">
+        <a class="wordmark" href="#top"><span class="wordmark-icon" aria-hidden="true">+</span> Passing the Controller</a>
+        <nav aria-label="Main navigation"><a href="#story">The story</a><a href="#sources">Data &amp; sources</a></nav>
+    </header>
+
+    <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+            <p class="eyebrow">Worldwide hardware estimates / 2006–2025</p>
+            <h1 id="hero-title">One hit console.<br>What happens <em>next?</em></h1>
+            <div class="hero-bottom">
+                <div>
+                    <p class="hero-deck">A bestselling system can win a year. A company’s position also depends on the other consoles it still sells. Follow the lead changes, then look at the generations underneath them.</p>
+                    <a class="start-link" href="#story">Start the story <span aria-hidden="true">↓</span></a>
+                </div>
+                <dl class="hero-stats">
+                    <div><dt>Years</dt><dd>20</dd></div>
+                    <div><dt>Console families</dt><dd id="console-count">—</dd></div>
+                    <div><dt>Companies</dt><dd>3</dd></div>
+                </dl>
+            </div>
+            <p class="scope-note">This story covers the platforms available in the VGChartz comparison tool. Some older systems, including PlayStation 2 and Game Boy Advance, are absent. Company totals and shares refer to these tracked records, not the entire console market.</p>
+        </section>
+
+        <div id="load-status" class="load-status" role="status">Loading the source records…</div>
+
+        <section id="story" aria-label="Interactive console sales story">
+            <div class="explore-controls" aria-label="Chart controls">
+                <div class="control"><label for="start-year">From</label><select id="start-year"></select></div>
+                <div class="control"><label for="end-year">Through</label><select id="end-year"></select></div>
+                <div class="control"><label for="hardware">Hardware</label><select id="hardware"><option value="All">All types</option><option value="Home">Home</option><option value="Handheld">Handheld</option><option value="Hybrid">Hybrid</option></select></div>
+                <div class="focus-control"><label for="focus-year">Story year <output id="focus-year-label">2018</output></label><input id="focus-year" type="range" min="2006" max="2025" value="2018" step="1"></div>
+                <button id="reset" class="text-button" type="button">Reset</button>
+            </div>
+
+            <div class="story-layout">
+                <figure class="viz-panel" aria-labelledby="chart-title">
+                    <div class="figure-topline"><span id="chapter-number" class="eyebrow">Chapter 01 / 05</span><span id="selection-label" class="selection-label">2006–2025 · All hardware</span></div>
+                    <h2 id="chart-title">Who leads the tracked sales?</h2>
+                    <div class="company-legend" aria-label="Highlight a company">
+                        <span>Highlight</span>
+                        <button type="button" data-company="Sony" aria-pressed="false"><i style="--company-color:#346AA6" aria-hidden="true"></i>Sony</button>
+                        <button type="button" data-company="Microsoft" aria-pressed="false"><i style="--company-color:#3A8067" aria-hidden="true"></i>Microsoft</button>
+                        <button type="button" data-company="Nintendo" aria-pressed="false"><i style="--company-color:#BF6B34" aria-hidden="true"></i>Nintendo</button>
+                    </div>
+                    <div id="pair-control" class="pair-control" hidden><label for="console-pair">Compare generations</label><select id="console-pair"></select></div>
+                    <div id="chart" class="chart-stage" aria-busy="true"></div>
+                    <figcaption id="chart-caption">Annual estimates in the included records. Hover or focus on a mark for details.</figcaption>
+                    <div class="chapter-navigation" aria-label="Choose a chapter">
+                        <button type="button" data-chapter="0" aria-current="step"><span>01</span> Trends</button>
+                        <button type="button" data-chapter="1"><span>02</span> Consoles</button>
+                        <button type="button" data-chapter="2"><span>03</span> Shares</button>
+                        <button type="button" data-chapter="3"><span>04</span> Lifecycles</button>
+                        <button type="button" data-chapter="4"><span>05</span> Handoffs</button>
+                    </div>
+                </figure>
+
+                <div class="story-copy">
+                    <article id="chapter-0" class="story-step is-active" data-step="0">
+                        <p class="eyebrow">01 / Establish the competition</p>
+                        <h2>A company’s lead is bigger than one console.</h2>
+                        <p id="insight-0" class="data-insight">We begin with annual company totals, then ask which systems sit behind the lead.</p>
+                        <p>These totals combine each company’s available home, handheld, and hybrid records. Change the hardware filter to see how that choice affects the comparison.</p>
+                        <p class="interaction-hint">Move the story-year slider. The same year follows you through all five views.</p>
+                    </article>
+                    <article id="chapter-1" class="story-step" data-step="1">
+                        <p class="eyebrow">02 / Look underneath the total</p>
+                        <h2>Does the top console belong to the top company?</h2>
+                        <p id="insight-1" class="data-insight">Rank the consoles in the story year to compare a single platform with an entire company portfolio.</p>
+                        <p>A single-console ranking and a company ranking answer different questions. A company can have several systems selling at the same time.</p>
+                        <p class="interaction-hint">Select a bar to follow that console in the heatmap and generation comparison.</p>
+                    </article>
+                    <article id="chapter-2" class="story-step" data-step="2">
+                        <p class="eyebrow">03 / Put the difference in context</p>
+                        <h2>A portfolio changes the balance.</h2>
+                        <p id="insight-2" class="data-insight">Now compare each company with the total units in that year’s tracked records.</p>
+                        <p>The bars always add up to 100% of the included sales. Highlighting a company changes its emphasis, so the denominator stays the same.</p>
+                        <p class="interaction-hint">Hover over a segment for its estimated units, percentage, and denominator.</p>
+                    </article>
+                    <article id="chapter-3" class="story-step" data-step="3">
+                        <p class="eyebrow">04 / Follow the consoles through time</p>
+                        <h2>Generations overlap.</h2>
+                        <p id="insight-3" class="data-insight">The heatmap reveals which consoles were still appearing in the records as newer systems arrived.</p>
+                        <p>A company’s total can include both a newer hit and an older console. Darker cells mean more estimated sales. Hatching means no record, which is different from zero sales.</p>
+                        <p class="interaction-hint">Hover or focus on a cell. Select a row’s cells to follow that console.</p>
+                    </article>
+                    <article id="chapter-4" class="story-step" data-step="4">
+                        <p class="eyebrow">05 / Examine the handoff</p>
+                        <h2>The next system joins an existing portfolio.</h2>
+                        <p id="insight-4" class="data-insight">Compare the sales ribbons of two console families during their overlapping recorded years.</p>
+                        <p>Both ribbons use the same thickness scale. The shaded interval marks years with records for both families. These are sales comparisons, not movements of buyers between systems.</p>
+                        <p class="interaction-hint">Choose another console pair and move the story year to compare different handoffs.</p>
+                        <div class="takeaway"><strong>The takeaway</strong><p>A winning console and a leading company are different things. Looking at the whole tracked portfolio, including overlapping generations, helps explain that difference.</p></div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section id="sources" class="sources" aria-labelledby="sources-heading">
+            <p class="eyebrow">Behind the story</p>
+            <h2 id="sources-heading">The records behind the charts.</h2>
+            <div class="source-columns">
+                <div><h3>One measurement throughout</h3><p>All sales figures come from <a href="https://www.vgchartz.com/tools/hw_date.php?ending=Yearly&amp;reg=Global" target="_blank" rel="noopener noreferrer">VGChartz’s global yearly hardware comparison</a>. They are estimated units sold to consumers. We do not combine them with manufacturer shipment totals.</p><p>VGChartz revises estimates. This page uses a saved source snapshot so its figures can be reproduced. <span id="snapshot-date"></span></p><p><a href="https://www.vgchartz.com/methodology.php" target="_blank" rel="noopener noreferrer">Read the VGChartz methodology</a></p></div>
+                <div><h3>What the data can tell us</h3><p>The dataset includes 14 console families and 123 reported console-year records from 2006 through 2025. It excludes the incomplete 2026 year. Company and hardware classifications are added metadata.</p><p>Blank or absent observations stay missing. A console’s first recorded year is not automatically its release date. Totals and shares describe available records, and cannot establish why sales changed.</p></div>
+            </div>
+            <details class="data-details">
+                <summary>Inspect the selected records</summary>
+                <div class="data-table-heading"><p id="record-count"></p><a href="data/console_sales.csv" download="console_sales_2006_2025.csv">Download the full CSV</a></div>
+                <div class="table-scroll" tabindex="0" aria-label="Scroll the data table"><table><caption>Source records after the year and hardware filters</caption><thead><tr><th scope="col">Year</th><th scope="col">Console family</th><th scope="col">Company</th><th scope="col">Hardware</th><th scope="col">Estimated units</th></tr></thead><tbody id="data-rows"></tbody></table></div>
+            </details>
+        </section>
+    </main>
+    <footer class="site-footer"><span>CSE 478 · Console Sales Project</span><a href="#top">Back to the beginning ↑</a></footer>
+    <div id="tooltip" class="tooltip" role="tooltip" hidden></div>
+    <p id="announcement" class="sr-only" aria-live="polite"></p>
+</body>
+</html>
