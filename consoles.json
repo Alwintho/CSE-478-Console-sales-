@@ -1,0 +1,114 @@
+[
+  {
+    "id": "PS3",
+    "name": "PlayStation 3",
+    "company": "Sony",
+    "hardware": "Home",
+    "firstObservedYear": 2006,
+    "lastObservedYear": 2017
+  },
+  {
+    "id": "PSP",
+    "name": "PlayStation Portable",
+    "company": "Sony",
+    "hardware": "Handheld",
+    "firstObservedYear": 2004,
+    "lastObservedYear": 2016
+  },
+  {
+    "id": "Wii",
+    "name": "Wii",
+    "company": "Nintendo",
+    "hardware": "Home",
+    "firstObservedYear": 2006,
+    "lastObservedYear": 2015
+  },
+  {
+    "id": "X360",
+    "name": "Xbox 360",
+    "company": "Microsoft",
+    "hardware": "Home",
+    "firstObservedYear": 2005,
+    "lastObservedYear": 2017
+  },
+  {
+    "id": "DS",
+    "name": "Nintendo DS",
+    "company": "Nintendo",
+    "hardware": "Handheld",
+    "firstObservedYear": 2004,
+    "lastObservedYear": 2013
+  },
+  {
+    "id": "3DS",
+    "name": "Nintendo 3DS",
+    "company": "Nintendo",
+    "hardware": "Handheld",
+    "firstObservedYear": 2011,
+    "lastObservedYear": 2021
+  },
+  {
+    "id": "PSV",
+    "name": "PlayStation Vita",
+    "company": "Sony",
+    "hardware": "Handheld",
+    "firstObservedYear": 2011,
+    "lastObservedYear": 2019
+  },
+  {
+    "id": "WiiU",
+    "name": "Wii U",
+    "company": "Nintendo",
+    "hardware": "Home",
+    "firstObservedYear": 2012,
+    "lastObservedYear": 2017
+  },
+  {
+    "id": "PS4",
+    "name": "PlayStation 4",
+    "company": "Sony",
+    "hardware": "Home",
+    "firstObservedYear": 2013,
+    "lastObservedYear": 2024
+  },
+  {
+    "id": "XOne",
+    "name": "Xbox One",
+    "company": "Microsoft",
+    "hardware": "Home",
+    "firstObservedYear": 2013,
+    "lastObservedYear": 2022
+  },
+  {
+    "id": "NS",
+    "name": "Nintendo Switch",
+    "company": "Nintendo",
+    "hardware": "Hybrid",
+    "firstObservedYear": 2017,
+    "lastObservedYear": 2025
+  },
+  {
+    "id": "PS5",
+    "name": "PlayStation 5",
+    "company": "Sony",
+    "hardware": "Home",
+    "firstObservedYear": 2020,
+    "lastObservedYear": 2025
+  },
+  {
+    "id": "XS",
+    "name": "Xbox Series X/S",
+    "company": "Microsoft",
+    "hardware": "Home",
+    "firstObservedYear": 2020,
+    "lastObservedYear": 2025
+  },
+  {
+    "id": "NS2",
+    "name": "Nintendo Switch 2",
+    "company": "Nintendo",
+    "hardware": "Hybrid",
+    "firstObservedYear": 2025,
+    "lastObservedYear": 2025
+  }
+]
