@@ -1,0 +1,22 @@
+{
+  "source": "VGChartz Yearly Hardware Comparisons \u2014 Global",
+  "source_url": "https://www.vgchartz.com/tools/hw_date.php?ending=Yearly&reg=Global",
+  "methodology_url": "https://www.vgchartz.com/methodology.php",
+  "retrieved_at": "2026-11-25T16:43:35.134737+00:00",
+  "source_html_sha256": "d21684dfcb52b65bafd82eb84f9152ed4915ef942ce3a130ce45dc8b5f66d8d9",
+  "row_count": 123,
+  "console_count": 14,
+  "start_year": 2006,
+  "end_year": 2025,
+  "excluded": [
+    "2026: incomplete calendar year",
+    "Platforms absent from this source tool, including PS2 and Game Boy Advance"
+  ],
+  "preprocessing": [
+    "Decode source timestamps in UTC to obtain calendar years.",
+    "Keep source annual figures unchanged.",
+    "Limit the displayed period to 2006\u20132025.",
+    "Expand platform abbreviations and add manually reviewed company and hardware classifications.",
+    "Retain missing observations as missing; never manufacture zero sales."
+  ]
+}
