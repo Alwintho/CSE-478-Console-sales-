@@ -10,3 +10,12 @@ Checked November 25, 2026.
 - The app loads D3 and its data locally, so viewing it does not depend on a CDN request.
 
 Still needed before the final release: team review of the story and design, comparison with the complete Canvas rubric, confirmation of the innovative view, instructor repository access, and a final tagged GitHub release.
+
+## Timeline Explorer implementation checks
+
+Checked November 27, 2026.
+
+- The interactive bubble chart rendered successfully, with duplicate browser tooltips removed while preserving accessibility information.
+- Bubble selection, linked visualizations, year and hardware filters, company highlighting, keyboard interactions, and reset were manually tested.
+- Responsive layouts at 1024, 768, and 390 pixels wide were checked.
+- All eight existing Node data tests passed, and no JavaScript errors were observed during manual browser testing.

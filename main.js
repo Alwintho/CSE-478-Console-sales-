@@ -8,7 +8,7 @@ const $ = selector => document.querySelector(selector);
 const titles = [
     'Who leads the tracked sales?', 'Which consoles sold in the story year?',
     'How does the company balance change?', 'Which generations sold alongside each other?',
-    'A closer look at overlapping generations',
+    'A closer look at overlapping generations', 'Timeline Explorer: How do console sales evolve?',
 ];
 const captions = [
     'Company sums use available console records. Dashed and dotted lines distinguish companies. Select a point to change the story year.',
@@ -16,6 +16,7 @@ const captions = [
     'Percentages use all tracked companies after the year and hardware filters. Highlighting never changes the denominator. Hatching means no records.',
     'Rows show console families. Color represents annual estimated units; hatching means no source record. A missing record does not mean zero.',
     'Both ribbons use one thickness scale. Shading marks years reported for both families. No record is hatched. Ribbons do not show transfers of buyers.',
+    'Bubble area represents annual estimated console sales, and color identifies the company. Select a bubble to follow a console and year. Hollow circles represent recorded zero sales, while missing records have no bubble.',
 ];
 const millions = value => `${(value / 1e6).toFixed(2)} million`;
 const percent = value => `${(100 * value).toFixed(1)}%`;
@@ -23,7 +24,13 @@ const percent = value => `${(100 * value).toFixed(1)}%`;
 function currentData() {
     const filtered = filterRecords(records, state);
     const years = yearRange(state.start, state.end);
-    return { records: filtered, years, annual: companyYears(filtered, years), consoles, pair: PAIRS.find(pair => pair.id === state.pair) };
+
+    // Find the maximum annual console sales across the complete dataset.
+    const maxConsoleSales = Math.max(1, ...records
+        .filter(row => row.units !== null)
+        .map(row => row.units));
+
+    return { records: filtered, years, annual: companyYears(filtered, years), consoles, pair: PAIRS.find(pair => pair.id === state.pair), maxConsoleSales };
 }
 
 function updateNarrative(data) {
@@ -52,6 +59,35 @@ function updateNarrative(data) {
     } else {
         $('#insight-4').textContent = 'Choose a hardware type with two comparable console families to examine an overlap.';
     }
+
+    // Find the selected console's reported sales within the current filters.
+    const timelineRecords = data.records.filter(row =>
+        row.console_id === state.console && row.units !== null
+    );
+
+    if (timelineRecords.length > 0) {
+        const consoleName = timelineRecords[0].console;
+
+        // Find the selected console's sales in the current story year.
+        const timelineFocus = timelineRecords.find(row => row.year === state.focus);
+
+        // Identify the highest annual sales within the selected period.
+        const peak = timelineRecords.reduce((best, row) =>
+            row.units > best.units ? row : best
+        );
+
+        // Distinguish missing sales records from reported zero sales.
+        const focusDescription = timelineFocus
+            ? `In ${state.focus}, ${consoleName} recorded ${millions(timelineFocus.units)} estimated units.`
+            : `No sales record is available for ${consoleName} in ${state.focus}.`;
+
+        // Update the narrative to reflect the selected console and year.
+        $('#insight-5').textContent =
+            `${focusDescription} Its highest recorded annual sales within the selected period occurred in ${peak.year}, reaching ${millions(peak.units)} units.`;
+    } else {
+        $('#insight-5').textContent =
+            'Select a console bubble or adjust the filters to explore its recorded sales history.';
+    }
 }
 
 function updateTable(data) {
@@ -79,7 +115,7 @@ function syncControls() {
     $('#focus-year-label').value = state.focus;
     $('#focus-year-label').textContent = state.focus;
     $('#selection-label').textContent = `${state.start}–${state.end} · ${state.hardware === 'All' ? 'All hardware' : state.hardware}`;
-    $('#chapter-number').textContent = `Chapter ${String(state.chapter + 1).padStart(2, '0')} / 05`;
+    $('#chapter-number').textContent = `Chapter ${String(state.chapter + 1).padStart(2, '0')} / ${String(titles.length).padStart(2, '0')}`;
     $('#chart-title').textContent = titles[state.chapter];
     $('#chart-caption').textContent = captions[state.chapter];
     $('#pair-control').hidden = state.chapter !== 4;

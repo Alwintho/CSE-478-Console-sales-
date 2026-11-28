@@ -16,11 +16,13 @@ Open http://localhost:8000. Run the command from the folder containing `index.ht
 
 The opening story year is chosen from an actual leadership change where the bestselling console belongs to a different company than the company leading the tracked totals. In this snapshot that is 2018: PlayStation 4 is the leading individual console, but Nintendo leads the included company records.
 
-The five techniques are an annual line chart, horizontal console ranking, 100% stacked bars, console/year heatmap, and a custom generation comparison using sales ribbons. Scrolling introduces them in sequence. Chapter buttons offer direct navigation.
+The six visualization views are an annual line chart, horizontal console ranking, 100% stacked bars, console/year heatmap, a custom generation comparison using sales ribbons, and an interactive bubble chart for exploring console sales over time. Scrolling introduces them in sequence. Chapter buttons offer direct navigation.
 
-Year bounds and hardware type apply throughout. The story-year slider links the comparisons. Company buttons only highlight; they do not remove records or change percentage denominators. Selecting a console follows it into the heatmap and an appropriate generation pair. Marks support pointer hover and keyboard focus. Press Enter or Space on an interactive mark to select it.
+Year bounds and hardware type apply throughout. The story-year slider links the comparisons. Company buttons only highlight; they do not remove records or change percentage denominators. Selecting a console follows it into the heatmap, an appropriate generation pair, and the Timeline Explorer. Marks support pointer hover and keyboard focus. Press Enter or Space on an interactive mark to select it.
 
 The ribbon view uses one thickness scale for two console families and shades their shared recorded years. Missing figures are hatched. It compares sales rather than customer migration. Whether this custom technique satisfies the instructor's innovative-view definition still needs checking against the complete rubric.
+
+The Timeline Explorer uses bubble area to represent annual estimated console sales and color to identify the company. Bubbles sharing a company and year are vertically separated to reduce overlap. Selecting a bubble updates the selected console and story year across the linked views. Hollow circles represent recorded zero sales, while missing records have no bubble.
 
 ## Real data and limitations
 
@@ -57,7 +59,7 @@ npm test
 
 The tests cover source-to-CSV fidelity, duplicate keys, missing-versus-zero handling, share denominators, hardware filtering, and the story's main numerical comparison.
 
-Before submission, manually check all five chapter buttons; normal scrolling; pointer and keyboard details; hardware/year filters, including empty and single-year selections; company highlighting; console selection; generation pair choices; reset; and phone-width layout. Inspect the browser console for errors.
+Before submission, manually check all six chapter buttons; normal scrolling; pointer and keyboard details; hardware/year filters, including empty and single-year selections; company highlighting; console selection; generation pair choices; reset; and phone-width layout. Inspect the browser console for errors.
 
 ## GitHub and the December 4 submission
 

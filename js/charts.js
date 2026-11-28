@@ -33,7 +33,8 @@ function interactions(selection, describe, activate = null) {
             }
         });
     if (activate) selection.on('click', (_, d) => activate(d));
-    selection.append('title').text(d => describe(d).join('\n'));
+
+    // Use the custom tooltip only to prevent duplicate browser tooltips.
 }
 
 function opacity(company, state) {
@@ -46,8 +47,7 @@ function frame(container, title, left = 66) {
     const height = compact ? 350 : 510;
     const margin = { top: 48, right: compact ? 24 : 78, bottom: 60, left: compact ? Math.min(left, 82) : left };
     const svg = d3.select(container).append('svg').attr('viewBox', `0 0 ${width} ${height}`)
-        .attr('role', 'group').attr('aria-labelledby', 'svg-title svg-description');
-    svg.append('title').attr('id', 'svg-title').text(title);
+        .attr('role', 'group').attr('aria-label', title).attr('aria-describedby', 'svg-description');
     svg.append('desc').attr('id', 'svg-description').text('VGChartz global hardware estimates. Focus on chart marks for details, or inspect the source table below the story.');
     const pattern = svg.append('defs').append('pattern').attr('id', 'missing-record')
         .attr('width', 6).attr('height', 6).attr('patternUnits', 'userSpaceOnUse');
@@ -286,7 +286,156 @@ function drawHandoff(container, data, state, callbacks) {
         .text(overlap.length ? `Both families reported in ${overlap.length} selected year${overlap.length === 1 ? '' : 's'}` : 'No shared recorded years in this range');
 }
 
-const DRAW = [drawTrends, drawRanking, drawShares, drawHeatmap, drawHandoff];
+// Draw the interactive Timeline Explorer using annual console sales.
+function drawTimeline(container, data, state, callbacks) {
+    const plot = frame(container, 'Interactive console sales timeline', 100);
+    const { svg, margin, right, bottom, compact } = plot;
+
+    // Include reported sales values while preserving recorded zero sales.
+    const rows = data.records.filter(d => d.units !== null);
+
+    if (!rows.length) return emptyChart(plot);
+
+    // Create the year scale and leave space for bubbles at both ends.
+    const x = yearScale(plot, data.years)
+        .range([margin.left + 18, right - 18]);
+
+    // Create a separate horizontal row for each company.
+    const companies = ['Nintendo', 'Sony', 'Microsoft'];
+    const y = d3.scaleBand()
+        .domain(companies)
+        .range([margin.top + 30, bottom])
+        .padding(.2);
+
+    // Calculate the center of each company row.
+    const center = company => y(company) + y.bandwidth() / 2;
+
+    // Use a consistent sales scale across different filter selections.
+    const maxSales = data.maxConsoleSales || d3.max(rows, d => d.units) || 1;
+
+    // Limit bubble sizes according to the available chart space.
+    const yearSpacing = (right - margin.left - 36) /
+        Math.max(1, data.years.length - 1);
+
+    const maxRadius = Math.min(
+        compact ? 12 : 18,
+        yearSpacing * .44,
+        y.bandwidth() / 6
+    );
+
+    // Use a square-root scale so bubble area represents annual sales.
+    const radius = d3.scaleSqrt()
+        .domain([0, maxSales])
+        .range([0, maxRadius]);
+
+    // Draw company labels and horizontal reference lines.
+    companies.forEach(company => {
+        svg.append('line')
+            .attr('x1', margin.left)
+            .attr('x2', right)
+            .attr('y1', center(company))
+            .attr('y2', center(company))
+            .attr('stroke', COLORS[company])
+            .attr('stroke-opacity', .25)
+            .attr('stroke-dasharray', '4 4');
+
+        svg.append('text')
+            .attr('x', margin.left - 10)
+            .attr('y', center(company) + 4)
+            .attr('text-anchor', 'end')
+            .attr('font-size', compact ? 11 : 13)
+            .attr('font-weight', 700)
+            .attr('fill', COLORS[company])
+            .text(company);
+    });
+
+    // Reuse the shared year axis and story-year indicator.
+    xAxis(plot, x, data.years);
+    focusGuide(plot, x, state);
+
+    // Group consoles by company and year to separate overlapping bubbles.
+    const groups = d3.group(rows, d => d.company, d => d.year);
+    const positions = new Map();
+
+    groups.forEach(yearGroups => {
+        yearGroups.forEach(items => {
+            items.sort((a, b) => a.console_id.localeCompare(b.console_id));
+
+            // Calculate the space required by the bubbles in each group.
+            const sizes = items.map(d => d.units === 0 ? 2 : radius(d.units));
+            const gap = 4;
+            const totalHeight = d3.sum(sizes, r => r * 2) +
+                gap * (items.length - 1);
+
+            let offset = -totalHeight / 2;
+
+            // Position each bubble without changing its corresponding year.
+            items.forEach((item, i) => {
+                positions.set(item, center(item.company) + offset + sizes[i]);
+                offset += sizes[i] * 2 + gap;
+            });
+        });
+    });
+
+    // Draw one bubble for every reported console-year sales record.
+    const bubbles = svg.selectAll('circle.timeline-bubble')
+        .data(rows)
+        .join('circle')
+        .attr('class', 'timeline-bubble')
+        .attr('cx', d => x(d.year))
+        .attr('cy', d => positions.get(d))
+        .attr('r', d => d.units === 0 ? 2 : radius(d.units))
+        .attr('fill', d => d.units === 0 ? 'none' : COLORS[d.company])
+        .attr('fill-opacity', .7)
+        .attr('stroke', d => d.console_id === state.console ? '#202622' : COLORS[d.company])
+        .attr('stroke-width', d => d.console_id === state.console ? 2 : 1)
+        .attr('opacity', d => opacity(d.company, state))
+        .attr('aria-pressed', d => String(d.console_id === state.console));
+
+    // Reuse the project's tooltips, console selection, and keyboard controls.
+    interactions(bubbles, d => [
+        d.console,
+        d.company,
+        `${d.hardware_type} hardware`,
+        `${d.year}: ${exact(d.units)} estimated units`,
+        'Select to follow this console and year.'
+    ], d => callbacks.console(d.console_id, d.year));
+
+    // Add a bubble-size legend above the chart.
+    const legend = svg.append('g')
+        .attr('transform', `translate(${margin.left}, 22)`);
+
+    legend.append('text')
+        .attr('class', 'chart-note')
+        .attr('y', -7)
+        .text('Annual sales');
+
+    // Display representative sales values using the same radius scale.
+    const legendValues = [maxSales * .1, maxSales * .5, maxSales];
+    const legendSpacing = (right - margin.left) / 3;
+
+    const legendItems = legend.selectAll('g')
+        .data(legendValues)
+        .join('g')
+        .attr('transform', (d, i) =>
+            `translate(${legendSpacing * (i + .5)}, 18)`
+        );
+
+    legendItems.append('circle')
+        .attr('r', d => radius(d))
+        .attr('fill', '#737e75')
+        .attr('fill-opacity', .35)
+        .attr('stroke', '#737e75');
+
+    legendItems.append('text')
+        .attr('y', maxRadius + 13)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', 11)
+        .attr('fill', '#5a655d')
+        .text(d => `${d3.format('.2~f')(d / 1e6)}M`);
+}
+
+const DRAW = [drawTrends, drawRanking, drawShares, drawHeatmap, drawHandoff, drawTimeline];
 
 export function renderChart(container, data, state, callbacks) {
     hideTooltip();
